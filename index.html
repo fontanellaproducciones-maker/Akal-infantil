@@ -1,0 +1,370 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Akal Infantil - Libros que Educan en Valores</title>
+    <link rel="stylesheet" href="styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700;800&family=Quicksand:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://widget.cloudinary.com/v2.0/global/all.js"></script>
+</head>
+<body>
+    <!-- Botón Admin Discreto -->
+    <div id="adminButton" class="admin-btn-fixed">⚙️</div>
+
+    <!-- Modal de Login -->
+    <div id="loginModal" class="modal-overlay">
+        <div class="modal-content">
+            <h2>Acceso Administrador</h2>
+            <input type="password" id="adminPassword" placeholder="Contraseña">
+            <button id="loginBtn" class="btn-primary">Entrar</button>
+            <p id="loginError" class="error-text">Contraseña incorrecta</p>
+            <button id="closeLoginBtn" class="btn-secondary">Cancelar</button>
+        </div>
+    </div>
+
+    <!-- Panel de Administración COMPLETO -->
+    <div id="adminPanel" class="admin-panel">
+        <div class="admin-container">
+            <div class="admin-header">
+                <h1>Panel de Administración</h1>
+                <button id="closeAdminBtn" class="btn-danger">Cerrar</button>
+            </div>
+
+            <div class="admin-tabs">
+                <button class="admin-tab active" data-tab="sections">Gestionar Secciones</button>
+                <button class="admin-tab" data-tab="hero">Hero Principal</button>
+                <button class="admin-tab" data-tab="cloudinary">Subir Archivos</button>
+                <button class="admin-tab" data-tab="settings">Configuración</button>
+            </div>
+
+            <!-- Tab: Gestionar Secciones -->
+            <div class="admin-content active" id="tab-sections">
+                <div class="section-controls">
+                    <h2>Secciones de la Web</h2>
+                    <button onclick="addNewSection()" class="btn-success">+ Añadir Nueva Sección</button>
+                </div>
+                <div id="sectionsList" class="sections-list"></div>
+            </div>
+
+            <!-- Tab: Hero -->
+            <div class="admin-content" id="tab-hero">
+                <h2>Hero Principal (Inicio)</h2>
+                <div class="form-group">
+                    <label>Título Principal</label>
+                    <input type="text" id="heroTitle" class="form-control">
+                </div>
+                <div class="form-group">
+                    <label>Subtítulo</label>
+                    <textarea id="heroSubtitle" class="form-control" rows="2"></textarea>
+                </div>
+                <div class="form-group">
+                    <label>Descripción</label>
+                    <textarea id="heroDescription" class="form-control" rows="4"></textarea>
+                </div>
+                <div class="form-group">
+                    <label>URL Imagen de Fondo (Cloudinary)</label>
+                    <input type="text" id="heroBackgroundImage" class="form-control" placeholder="https://res.cloudinary.com/...">
+                </div>
+                <div class="form-group">
+                    <label>Texto Botón 1</label>
+                    <input type="text" id="heroButton1" class="form-control">
+                </div>
+                <div class="form-group">
+                    <label>Texto Botón 2</label>
+                    <input type="text" id="heroButton2" class="form-control">
+                </div>
+            </div>
+
+            <!-- Tab: Cloudinary -->
+            <div class="admin-content" id="tab-cloudinary">
+                <h2>Subir Archivos a Cloudinary</h2>
+                <button id="uploadToCloudinary" class="btn-success">📤 Subir Imagen/Video/PDF</button>
+                <div id="cloudinaryResult" class="cloudinary-result"></div>
+                <div class="info-box">
+                    <h3>💡 Configuración de Cloudinary</h3>
+                    <p>1. Crea cuenta en cloudinary.com</p>
+                    <p>2. Edita admin.js y reemplaza TU_CLOUD_NAME y TU_UPLOAD_PRESET</p>
+                    <p>3. Luego sube archivos y copia la URL para usarla en tus secciones</p>
+                </div>
+            </div>
+
+            <!-- Tab: Settings -->
+            <div class="admin-content" id="tab-settings">
+                <h2>Configuración General</h2>
+                <div class="form-group">
+                    <label>Email de Contacto</label>
+                    <input type="email" id="contactEmail" class="form-control">
+                </div>
+                <div class="form-group">
+                    <label>Teléfono</label>
+                    <input type="text" id="contactPhone" class="form-control">
+                </div>
+                <div class="form-group">
+                    <label>Ubicación</label>
+                    <input type="text" id="contactLocation" class="form-control">
+                </div>
+            </div>
+
+            <!-- Acciones Finales -->
+            <div class="admin-actions">
+                <button id="saveChanges" class="btn-primary">💾 Guardar Cambios</button>
+                <button id="downloadHTML" class="btn-success">📥 Descargar index.html</button>
+                <p class="help-text">1. Guarda cambios | 2. Descarga HTML | 3. Sube a GitHub</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- HEADER CON LOGO -->
+    <header class="header">
+        <nav class="nav-container">
+            <div class="logo">
+                <img src="images/logo-akal.jpg" alt="Akal Infantil" class="logo-img">
+                <p class="tagline">Libros para vivir mil mundos</p>
+            </div>
+            <ul class="nav-menu" id="navMenu">
+                <li><a href="#inicio">Inicio</a></li>
+                <li><a href="#valores">Nuestros Valores</a></li>
+                <li><a href="#colecciones">Colecciones</a></li>
+                <li><a href="#catalogo">Catálogo</a></li>
+                <li><a href="#contacto">Contacto</a></li>
+            </ul>
+            <div class="hamburger" id="hamburger">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+        </nav>
+    </header>
+
+    <!-- HERO IMPACTANTE CON ILUSTRACIÓN -->
+    <section class="hero-modern" id="inicio">
+        <div class="hero-background" style="background-image: url('images/ilustracion-arbol-musical.jpg');"></div>
+        <div class="hero-overlay"></div>
+        <div class="hero-content-modern">
+            <div class="hero-badge">Editorial Infantil</div>
+            <h1 class="hero-title-modern">Libros que Transforman</h1>
+            <p class="hero-subtitle-modern">No solo entretenemos, <strong>educamos en valores</strong></p>
+            <p class="hero-description-modern">Herramientas pedagógicas para colegios, comunidades y familias que buscan formar niños con pensamiento crítico, creatividad y corazón.</p>
+            <div class="hero-buttons-modern">
+                <a href="#catalogo" class="btn-hero-primary">Descubre nuestros libros</a>
+                <a href="#contacto" class="btn-hero-secondary">Contacta con nosotros</a>
+            </div>
+            <div class="hero-stats">
+                <div class="stat-item">
+                    <div class="stat-number">50+</div>
+                    <div class="stat-label">Libros publicados</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-number">200+</div>
+                    <div class="stat-label">Colegios confían</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-number">100%</div>
+                    <div class="stat-label">Enfoque en valores</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- SECCIÓN VALORES CON ILUSTRACIÓN -->
+    <section class="values-section" id="valores">
+        <div class="container">
+            <div class="section-visual-grid">
+                <div class="section-content">
+                    <h2 class="section-title">Más que Libros, Son Herramientas de Transformación</h2>
+                    <p class="section-intro">En un mundo donde los niños viven permanentemente conectados, ofrecemos una forma diferente de conexión: a través de lecturas de calidad con humor y corazón.</p>
+                    <div class="values-grid">
+                        <div class="value-card">
+                            <div class="value-icon">🎯</div>
+                            <h3>Educación en Valores</h3>
+                            <p>Cada libro transmite valores fundamentales: empatía, respeto, diversidad, pensamiento crítico y creatividad.</p>
+                        </div>
+                        <div class="value-card">
+                            <div class="value-icon">🧩</div>
+                            <h3>Fichas Pedagógicas</h3>
+                            <p>Cada título incluye fichas con los valores que transmite y actividades prácticas para aplicar en el aula o en casa.</p>
+                        </div>
+                        <div class="value-card">
+                            <div class="value-icon">🌍</div>
+                            <h3>Visión Crítica</h3>
+                            <p>Fomentamos el cuestionamiento, el diálogo y el acercamiento a realidades diversas con lenguaje poético y cercano.</p>
+                        </div>
+                        <div class="value-card">
+                            <div class="value-icon">❤️</div>
+                            <h3>Conexión Emocional</h3>
+                            <p>Ayudamos a los niños a simbolizar lo que pasa a su alrededor y en sí mismos, con historias que tocan el corazón.</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="section-illustration">
+                    <img src="images/ilustracion-cocina.jpg" alt="Ilustración valores" class="floating-illustration">
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- SECCIÓN COLECCIONES CON ILUSTRACIÓN -->
+    <section class="collections-section" id="colecciones">
+        <div class="container">
+            <div class="section-visual-grid reverse">
+                <div class="section-illustration">
+                    <img src="images/ilustracion-elefante.jpg" alt="Ilustración colecciones" class="floating-illustration">
+                </div>
+                <div class="section-content">
+                    <h2 class="section-title">Nuestras Colecciones</h2>
+                    <p class="section-intro">Cada colección responde a diferentes momentos y necesidades del desarrollo infantil</p>
+                    <div class="collections-grid">
+                        <div class="collection-card">
+                            <div class="collection-header" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
+                                <h3>MIL MUNDOS Ilustrados</h3>
+                            </div>
+                            <div class="collection-body">
+                                <p><strong>Álbumes ilustrados</strong> que despiertan la imaginación y abren ventanas a otras realidades.</p>
+                                <ul class="collection-features">
+                                    <li>✓ Lenguaje visual potente</li>
+                                    <li>✓ Temas universales</li>
+                                    <li>✓ Para leer en familia</li>
+                                    <li>✓ Edades: 3-10 años</li>
+                                </ul>
+                            </div>
+                        </div>
+                        <div class="collection-card">
+                            <div class="collection-header" style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);">
+                                <h3>MIL MUNDOS Contados</h3>
+                            </div>
+                            <div class="collection-body">
+                                <p><strong>Ficción literaria</strong> que invita a la reflexión y desarrolla el pensamiento crítico.</p>
+                                <ul class="collection-features">
+                                    <li>✓ Narrativas profundas</li>
+                                    <li>✓ Personajes diversos</li>
+                                    <li>✓ Temas actuales</li>
+                                    <li>✓ Edades: 8-14 años</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- SECCIÓN CATÁLOGO CON ILUSTRACIÓN -->
+    <section class="catalog-section" id="catalogo">
+        <div class="container">
+            <div class="catalog-header-visual">
+                <div>
+                    <h2 class="section-title">Libros Destacados</h2>
+                    <p class="section-intro">Cada libro es una ventana a nuevos mundos y valores</p>
+                </div>
+                <img src="images/ilustracion-lluvia.jpg" alt="Personajes" class="catalog-illustration">
+            </div>
+            <div class="books-grid">
+                <div class="book-card">
+                    <div class="book-cover" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
+                        <span class="book-emoji">🐱</span>
+                    </div>
+                    <div class="book-info">
+                        <h3>La noche de los gatos</h3>
+                        <p class="book-description">Misterio, humor y ternura en una tradición felina secreta.</p>
+                        <div class="book-values">
+                            <span class="value-tag">Imaginación</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="book-card">
+                    <div class="book-cover" style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);">
+                        <span class="book-emoji">❓</span>
+                    </div>
+                    <div class="book-info">
+                        <h3>¿Qué te pasó?</h3>
+                        <p class="book-description">Un libro sobre empatía, escucha y la importancia del juego.</p>
+                        <div class="book-values">
+                            <span class="value-tag">Empatía</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="book-card">
+                    <div class="book-cover" style="background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);">
+                        <span class="book-emoji">❔</span>
+                    </div>
+                    <div class="book-info">
+                        <h3>Preguntas curiosas</h3>
+                        <p class="book-description">Celebra el arte de hacerse preguntas y la curiosidad infantil.</p>
+                        <div class="book-values">
+                            <span class="value-tag">Curiosidad</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- PARA EDUCADORES CON ILUSTRACIÓN -->
+    <section class="educators-section">
+        <div class="container">
+            <div class="section-visual-grid">
+                <div class="section-illustration">
+                    <img src="images/ilustracion-casa-arbol.jpg" alt="Ilustración educadores" class="floating-illustration">
+                </div>
+                <div class="section-content">
+                    <h2 class="section-title">Para Educadores</h2>
+                    <p class="section-intro">Recursos pedagógicos completos para el aula</p>
+                    <div class="educators-features">
+                        <div class="feature-item">
+                            <span class="feature-icon">📚</span>
+                            <h4>Fichas Didácticas</h4>
+                            <p>Material completo para trabajar cada libro en clase</p>
+                        </div>
+                        <div class="feature-item">
+                            <span class="feature-icon">🎯</span>
+                            <h4>Actividades</h4>
+                            <p>Ejercicios prácticos para reforzar valores</p>
+                        </div>
+                        <div class="feature-item">
+                            <span class="feature-icon">👥</span>
+                            <h4>Talleres</h4>
+                            <p>Sesiones presenciales con autores e ilustradores</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- SECCIONES DINÁMICAS -->
+    <div id="dynamicSections"></div>
+
+    <!-- CONTACTO -->
+    <section class="contact-section" id="contacto">
+        <div class="container">
+            <h2>Contacto</h2>
+            <p><span id="footerEmail">infantil@akal.com</span> | <span id="footerPhone">+34 91 000 00 00</span> | <span id="footerLocation">Madrid, España</span></p>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-col">
+                    <img src="images/logo-akal.jpg" alt="Akal Infantil" class="footer-logo">
+                    <p>Libros para vivir mil mundos</p>
+                </div>
+                <div class="footer-col">
+                    <h4>Contacto</h4>
+                    <p id="footerEmail2">infantil@akal.com</p>
+                    <p id="footerPhone2">+34 91 000 00 00</p>
+                    <p id="footerLocation2">Madrid, España</p>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2025 Akal Infantil. Todos los derechos reservados.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="script.js"></script>
+    <script src="admin.js"></script>
+</body>
+</html>
