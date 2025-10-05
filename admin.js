@@ -50,6 +50,33 @@ let websiteData = {
         location: 'Madrid, España'
     }
 };
+function editSection(id) {
+  const section = websiteData.sections.find(s => s.id === id);
+  if (!section) return alert('Sección no encontrada');
+  document.getElementById('editSectionId').value = id;
+  document.getElementById('editSectionTitle').value = section.title || '';
+  document.getElementById('editSectionContent').value = section.content || '';
+  document.getElementById('editSectionModal').style.display = 'flex';
+}
+
+function closeEditModal() {
+  document.getElementById('editSectionModal').style.display = 'none';
+}
+
+function saveSectionEdit() {
+  const id = parseInt(document.getElementById('editSectionId').value, 10);
+  const title = document.getElementById('editSectionTitle').value;
+  const content = document.getElementById('editSectionContent').value;
+  const sectionIndex = websiteData.sections.findIndex(s => s.id === id);
+  if(sectionIndex === -1) return alert('Sección no encontrada');
+
+  websiteData.sections[sectionIndex].title = title;
+  websiteData.sections[sectionIndex].content = content;
+
+  closeEditModal();
+  updatePublicView();
+  localStorage.setItem('akalData', JSON.stringify(websiteData));
+}
 
 // Código completo para login, renderizado, edición, guardado y descarga del contenido
 // (incluye manejo de secciones, tarjetas, items, settings)
